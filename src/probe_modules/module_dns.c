@@ -505,7 +505,12 @@ static bool process_response_answer(char **data, uint16_t *data_len,
 			}
 		}
 	} else if (type == DNS_QTYPE_TXT) {
-		if (rdlength >= 1 && (rdlength - 1) != *(uint8_t *)rdata) {
+		if (rdlength == 0) {
+			log_warn(
+			    "dns",
+			    "TXT record with no data. Not processing.");
+			fs_add_uint64(afs, "rdata_is_parsed", 0);
+		} else if (rdlength >= 1 && (rdlength - 1) != *(uint8_t *)rdata) {
 			log_warn(
 			    "dns",
 			    "TXT record with wrong TXT len. Not processing.");
